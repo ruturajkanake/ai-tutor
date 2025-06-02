@@ -1,0 +1,16 @@
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+transformers==4.41.1
+bitsandbytes==0.43.2.post4
+accelerate==0.30.1
+pymupdf==1.24.4
+sentence-transformers==2.7.0
+scikit-learn==1.5.0
+langchain==0.2.1
+langchain-community==0.2.1
+pynvml==11.5.0
+nest-asyncio==1.6.0
+python-multipart==0.0.9
+torch==2.3.0+cu124
+torchvision==0.18.0+cu124
+--extra-index-url https://download.pytorch.org/whl/cu124
