@@ -4,8 +4,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 from transformers import (
     pipeline, AutoTokenizer, AutoModelForCausalLM
 )
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores.sklearn import SKLearnVectorStore
+from transformers import BitsAndBytesConfig  
 
 # ---------- embeddings & vector store ---------- #
 embedder     = HuggingFaceEmbeddings(
@@ -16,9 +17,10 @@ vector_store = SKLearnVectorStore(embedding=embedder)
 # ---------- load language models (8‑bit) ---------- #
 def _init_pipe(repo: str):
     tok = AutoTokenizer.from_pretrained(repo, use_fast=True)
+    bnb_cfg = BitsAndBytesConfig(load_in_8bit=True) 
     mdl = AutoModelForCausalLM.from_pretrained(
         repo,
-        load_in_8bit=True,
+        quantization_config=bnb_cfg,
         device_map="auto"
     ).eval()
     pipe = pipeline("text-generation",
