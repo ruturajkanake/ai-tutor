@@ -68,15 +68,16 @@ async def ingest_endpoint(
 # 3.  Single-model query (/query/)
 # =============================
 @app.post("/query/")
-def query_endpoint(req: QueryRequest):
+def query_endpoint( model: str = Form(...),
+    query: str = Form(...)):
     """
     Accepts {"query":"...","model":"deepseek"} or {"query":"...","model":"llama"}.
     Runs the specified model (with auto metadata filtering) and returns metrics + answer.
     """
-    if req.model == "deepseek":
-        result = evaluate_model(req.query, "deepseek")
-    elif req.model == "llama":
-        result = evaluate_model(req.query, "llama")
+    if model == "deepseek":
+        result = evaluate_model(query, "deepseek")
+    elif model == "llama":
+        result = evaluate_model(query, "llama")
     else:
         raise HTTPException(status_code=400, detail="Model must be 'deepseek' or 'llama'")
     return {"status": "success", "result": result}
@@ -86,7 +87,7 @@ def query_endpoint(req: QueryRequest):
 # 4.  Dual-model query (/query/auto)
 # =====================================
 @app.post("/query/auto")
-def query_auto(req: QueryRequest):
+def query_auto(query: str = Form(...)):
     """
     Accepts {"query":"..."} (ignore req.model).
     Runs both DeepSeek-7B and LLaMA-3.1-8B on the same query (with metadata filters),
@@ -99,7 +100,7 @@ def query_auto(req: QueryRequest):
       }
     """
     try:
-        result = evaluate_both_models(req.query)
+        result = evaluate_both_models(query)
         return {"status": "success", **result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
